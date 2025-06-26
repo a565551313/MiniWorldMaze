@@ -6,21 +6,22 @@
 
 ## 目录
 
-- [事件监听 Event](#事件监听-event)
-- [世界事件 World](#世界事件-world)
-- [游戏逻辑事件 Game](#游戏逻辑事件-game)
-- [玩家事件 Player](#玩家事件-player)
-- [生物事件 Actor](#生物事件-actor)
-- [方块事件 Block](#方块事件-block)
-- [道具事件 Item](#道具事件-item)
-- [特效事件 Particle](#特效事件-particle)
-- [UI事件 UI](#ui事件-ui)
-- [其他事件 Other](#其他事件-other)
-- [错误码 ErrorCode](#错误码-errorcode)
-- [示例代码 Examples](#示例代码-examples)
+- [事件监听 Event](#event-listening)
+- [世界事件 World](#world-events)
+- [游戏逻辑事件 Game](#game-events)
+- [玩家事件 Player](#player-events)
+- [生物事件 Actor](#actor-events)
+- [方块事件 Block](#block-events)
+- [道具事件 Item](#item-events)
+- [特效事件 Particle](#particle-events)
+- [UI事件 UI](#ui-events)
+- [其他事件 Other](#other-events)
+- [错误码 ErrorCode](#errorcode)
+- [示例代码 Examples](#examples)
 
 ---
 
+<a name="event-listening"></a>
 ## 事件监听 Event
 
 无需创建事件管理对象，直接注册事件即可：
@@ -33,6 +34,7 @@ ScriptSupportEvent:registerEvent("Block.Add", Block_Add)
 
 ---
 
+<a name="world-events"></a>
 ## 世界事件 World
 
 | 事件名称              | 用法描述        | 接口参数                         | 参数说明                         |
@@ -43,6 +45,7 @@ ScriptSupportEvent:registerEvent("Block.Add", Block_Add)
 
 ---
 
+<a name="game-events"></a>
 ## 游戏逻辑事件 Game
 
 | 事件名称       | 用法描述           | 接口参数        | 参数说明         |
@@ -52,6 +55,7 @@ ScriptSupportEvent:registerEvent("Block.Add", Block_Add)
 
 ---
 
+<a name="player-events"></a>
 ## 玩家事件 Player
 
 | 事件名称                 | 用法描述             | 接口参数                                   | 参数说明                         |
@@ -102,6 +106,7 @@ ScriptSupportEvent:registerEvent("Block.Add", Block_Add)
 
 ---
 
+<a name="actor-events"></a>
 ## 生物事件 Actor
 
 | 事件名称                 | 用法描述             | 接口参数                                   | 参数说明                         |
@@ -124,6 +129,7 @@ ScriptSupportEvent:registerEvent("Block.Add", Block_Add)
 
 ---
 
+<a name="block-events"></a>
 ## 方块事件 Block
 
 | 事件名称                 | 用法描述             | 接口参数                                   | 参数说明                         |
@@ -138,6 +144,7 @@ ScriptSupportEvent:registerEvent("Block.Add", Block_Add)
 
 ---
 
+<a name="item-events"></a>
 ## 道具事件 Item
 
 | 事件名称                 | 用法描述             | 接口参数                                   | 参数说明                         |
@@ -156,6 +163,7 @@ ScriptSupportEvent:registerEvent("Block.Add", Block_Add)
 
 ---
 
+<a name="particle-events"></a>
 ## 特效事件 Particle
 
 | 事件名称                 | 用法描述             | 接口参数                                   | 参数说明                         |
@@ -167,6 +175,7 @@ ScriptSupportEvent:registerEvent("Block.Add", Block_Add)
 
 ---
 
+<a name="ui-events"></a>
 ## UI事件 UI
 
 | 事件名称                 | 用法描述             | 接口参数                                   | 参数说明                         |
@@ -181,6 +190,7 @@ ScriptSupportEvent:registerEvent("Block.Add", Block_Add)
 
 ---
 
+<a name="other-events"></a>
 ## 其他事件 Other
 
 | 事件名称                 | 用法描述             | 接口参数                                   | 参数说明                         |
@@ -192,6 +202,7 @@ ScriptSupportEvent:registerEvent("Block.Add", Block_Add)
 
 ---
 
+<a name="errorcode"></a>
 ## 错误码 ErrorCode
 
 | 错误码         | 含义               |
@@ -205,6 +216,7 @@ ScriptSupportEvent:registerEvent("Block.Add", Block_Add)
 
 ---
 
+<a name="examples"></a>
 ## 示例代码 Examples
 
 ### 监听玩家击杀指定生物，计数并结束游戏
@@ -258,4 +270,3 @@ ScriptSupportEvent:registerEvent("Block.DestroyBy", OnBlockDestroy)
 
 如果需要，我可以帮您继续完善具体函数调用示例或补充特殊接口说明。  
 感谢您的耐心！
-
