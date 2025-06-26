@@ -3,31 +3,31 @@
 ## 目录
 
 - [Wiki](#wiki)  
-- [登录](#登录)  
-- [事件列表](#事件列表)  
-  - [世界事件 (World)](#世界事件-world)  
-  - [游戏逻辑 (Game)](#游戏逻辑-game)  
-  - [玩家事件 (Player)](#玩家事件-player)  
-  - [生物事件 (Actor)](#生物事件-actor)  
-  - [方块事件 (Block)](#方块事件-block)  
-  - [道具事件 (Item)](#道具事件-item)  
-  - [特效事件 (Particle)](#特效事件-particle)  
+- [登录](#login)  
+- [事件列表](#event-list)  
+  - [世界事件 (World)](#world-events)  
+  - [游戏逻辑 (Game)](#game-logic)  
+  - [玩家事件 (Player)](#player-events)  
+  - [生物事件 (Actor)](#actor-events)  
+  - [方块事件 (Block)](#block-events)  
+  - [道具事件 (Item)](#item-events)  
+  - [特效事件 (Particle)](#particle-events)  
 
 ---
 
-## Wiki
+## Wiki <a name="wiki"></a>
 
 （此处可添加 Wiki 相关内容）
 
 ---
 
-## 登录
+## 登录 <a name="login"></a>
 
 （此处可添加登录相关说明）
 
 ---
 
-## 事件列表
+## 事件列表 <a name="event-list"></a>
 
 ### 彼得兔  
 更新时间: 2025-05-07 15:25:41
@@ -53,7 +53,7 @@ ScriptSupportEvent:registerEvent([=[Block.Trigger]=], Block_Trigger)
 
 ---
 
-## 世界事件 (World)
+## 世界事件 (World) <a name="world-events"></a>
 
 | 名称                | 用法描述         | 接口参数                 | 参数说明                       |
 |---------------------|------------------|--------------------------|------------------------------|
@@ -63,7 +63,7 @@ ScriptSupportEvent:registerEvent([=[Block.Trigger]=], Block_Trigger)
 
 ---
 
-## 游戏逻辑 (Game)
+## 游戏逻辑 (Game) <a name="game-logic"></a>
 
 | 名称         | 用法描述         | 接口参数     | 参数说明    |
 |--------------|------------------|--------------|-------------|
@@ -72,7 +72,7 @@ ScriptSupportEvent:registerEvent([=[Block.Trigger]=], Block_Trigger)
 
 ---
 
-## 玩家事件 (Player)
+## 玩家事件 (Player) <a name="player-events"></a>
 
 | 名称                 | 用法描述           | 接口参数                         | 参数说明                           |
 |----------------------|--------------------|---------------------------------|----------------------------------|
@@ -89,7 +89,7 @@ ScriptSupportEvent:registerEvent([=[Block.Trigger]=], Block_Trigger)
 
 ---
 
-## 生物事件 (Actor)
+## 生物事件 (Actor) <a name="actor-events"></a>
 
 | 名称                 | 用法描述           | 接口参数                         | 参数说明                           |
 |----------------------|--------------------|---------------------------------|----------------------------------|
@@ -100,7 +100,7 @@ ScriptSupportEvent:registerEvent([=[Block.Trigger]=], Block_Trigger)
 
 ---
 
-## 方块事件 (Block)
+## 方块事件 (Block) <a name="block-events"></a>
 
 | 名称             | 用法描述         | 接口参数                | 参数说明               |
 |------------------|------------------|-------------------------|------------------------|
@@ -111,7 +111,7 @@ ScriptSupportEvent:registerEvent([=[Block.Trigger]=], Block_Trigger)
 
 ---
 
-## 道具事件 (Item)
+## 道具事件 (Item) <a name="item-events"></a>
 
 | 名称                 | 用法描述           | 接口参数                         | 参数说明                           |
 |----------------------|--------------------|---------------------------------|----------------------------------|
@@ -121,7 +121,7 @@ ScriptSupportEvent:registerEvent([=[Block.Trigger]=], Block_Trigger)
 
 ---
 
-## 特效事件 (Particle)
+## 特效事件 (Particle) <a name="particle-events"></a>
 
 | 名称                   | 用法描述           | 接口参数                 | 参数说明               |
 |------------------------|--------------------|--------------------------|------------------------|
