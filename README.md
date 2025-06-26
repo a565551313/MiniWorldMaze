@@ -1,6 +1,6 @@
 # 迷你世界 脚本API 完整说明文档
 
-> 本文档基于官方Wiki及最新资料整理，包含迷你世界全部脚本API接口说明、事件监听、参数、返回值及示例，方便开发者快速查阅使用。
+> 本文档基于官方Wiki及最新资料整理，包含迷你世界主要脚本API接口说明、事件监听、参数、返回值及示例，方便开发者快速查阅使用。
 
 ---
 
@@ -15,247 +15,185 @@
 - [道具接口 Item](#道具接口-item)
 - [特效接口 Particle](#特效接口-particle)
 - [UI事件接口 UI](#ui事件接口-ui)
-- [其他事件](#其他事件)
-- [示例代码](#示例代码)
 - [错误码 ErrorCode](#错误码-errorcode)
 
 ---
 
-# 事件监听 Event
+## 事件监听 Event
 
-直接添加要监听的事件，无需自行创建事件管理对象。
-
-```lua
--- 游戏事件
-ScriptSupportEvent:registerEvent("Game.Start", Game_StartGame)
-ScriptSupportEvent:registerEvent("Game.Run", Game_Update)
-ScriptSupportEvent:registerEvent("Game.End", Game_GameOver)
-
--- 玩家事件
-ScriptSupportEvent:registerEvent("Player.Die", Player_Dead)
-ScriptSupportEvent:registerEvent("Player.Revive", Player_Revive)
-ScriptSupportEvent:registerEvent("Player.AddItem", BackPack_AddItem)
-
--- 方块事件
-ScriptSupportEvent:registerEvent("Block.Add", Block_Add)
-ScriptSupportEvent:registerEvent("Block.DestroyBy", Block_Destroy)
-ScriptSupportEvent:registerEvent("Block.Trigger", Block_Trigger)
-```
-
----
-
-# 事件分类与说明
-
-| 事件分类     | 说明                       |
-| ------------ | -------------------------- |
-| 世界事件     | 地图内相关事件             |
-| 游戏逻辑     | 游戏时间、Tick变化等       |
-| 玩家事件     | 玩家相关行为事件           |
-| 生物事件     | 非玩家生物相关事件         |
-| 方块事件     | 方块创建、破坏、触发等     |
-| 道具事件     | 道具生成、拾取、消耗等     |
-| 特效事件     | 特效生成                   |
-| UI事件       | 自定义UI交互               |
-| 其他事件     | 蓝图、合成、购买等特殊事件 |
-
----
-
-# 世界事件 (World)
-
-| 事件名称            | 用法描述           | 接口参数                        | 参数说明               |
-| ------------------- | ------------------ | ------------------------------- | ---------------------- |
-| Backpack.ItemChange  | 容器内道具变化     | blockid, itemid, itemnum, x,y,z | 方块类型，道具类型，道具数量，方块坐标 |
-| Backpack.ItemPutIn   | 容器内有道具放入   | blockid, itemid, itemnum, x,y,z | 同上                   |
-| Backpack.ItemTakeOut | 容器内有道具取出   | blockid, itemid, itemnum, x,y,z | 同上                   |
-
----
-
-# 游戏逻辑事件 (Game)
-
-| 事件名称       | 用法描述           | 接口参数              | 参数说明       |
-| -------------- | ------------------ | --------------------- | -------------- |
-| Game.Hour      | 世界小时时间变化   | hour                  | 游戏小时时间   |
-| Game.RunTime   | 世界Tick变化       | second, ticks         | 游戏分钟，游戏秒 |
-
----
-
-# 玩家事件 (Player)
-
-| 事件名称                 | 用法描述             | 接口参数                                  | 参数说明                           |
-| ------------------------ | -------------------- | ----------------------------------------- | -------------------------------- |
-| Game.AnyPlayer.Defeat     | 任一玩家失败         | eventobjid, shortix, x, y, z              | 事件玩家，快捷栏索引，坐标位置   |
-| Game.AnyPlayer.EnterGame  | 任一玩家进入游戏     | eventobjid, shortix, x, y, z              | 同上                             |
-| Game.AnyPlayer.LeaveGame  | 任一玩家离开游戏     | eventobjid, shortix, x, y, z              | 同上                             |
-| Game.AnyPlayer.Victory    | 任一玩家胜利         | eventobjid, shortix, x, y, z              | 同上                             |
-| Player.AddBuff            | 玩家获得状态效果     | eventobjid, buffid, bufflvl                | 事件玩家，状态ID，状态等级       |
-| Player.AddItem            | 玩家获得道具         | eventobjid, itemid, itemnum                | 事件玩家，道具类型，道具数量     |
-| Player.AreaIn             | 玩家进入区域         | eventobjid, areaid                         | 事件玩家，区域ID                 |
-| Player.AreaOut            | 玩家离开区域         | eventobjid, areaid                         | 同上                             |
-| Player.AttackHit          | 玩家击中目标         | eventobjid, targetactorid                  | 事件玩家，被攻击对象             |
-| Player.Attack             | 玩家攻击             | eventobjid, shortix, x, y, z              | 事件玩家，快捷栏索引，坐标位置 |
-| Player.BackPackChange     | 背包栏变化           | eventobjid, itemid, itemnum, itemix       | 事件玩家，道具类型，道具数量，道具所在格子索引 |
-| Player.BeHurt             | 玩家受到伤害         | eventobjid, hurtlv                         | 事件玩家，伤害值                 |
-| Player.ChangeAttr         | 玩家属性变化         | eventobjid, shortix, playerattr, playerattrval, x, y, z | 事件玩家，快捷栏索引，属性，属性值，坐标位置 |
-| Player.ClickActor         | 点击生物             | eventobjid, targetactorid                  | 事件玩家，被点击对象             |
-| Player.ClickBlock         | 点击方块             | eventobjid, blockid, x, y, z               | 事件玩家，方块类型，方块坐标   |
-| Player.Collide            | 玩家与玩家/生物碰撞  | eventobjid, toobjid                        | 事件玩家，目标对象             |
-| Player.ConsumeItem        | 玩家消耗道具         | eventobjid, itemid, itemnum                | 玩家，道具类型，道具数量         |
-| Player.DamageActor        | 玩家造成伤害         | eventobjid, toobjid, targetactorid, hurtlv | 事件玩家，目标对象，目标生物ID，伤害值 |
-| Player.DefeatActor        | 玩家击败目标         | eventobjid, toobjid, targetactorid        | 事件玩家，目标对象，被攻击对象 |
-| Player.Die                | 玩家死亡             | eventobjid, shortix, x, y, z              | 事件玩家，快捷栏索引，坐标位置 |
-| Player.DiscardItem        | 丢弃道具             | eventobjid, itemid, itemnum, toobjid      | 玩家，道具类型，道具数量，掉落物ID |
-| Player.DismountActor      | 玩家骑乘下           | eventobjid, targetactorid                  | 事件玩家，被攻击对象           |
-| Player.EquipChange        | 装备栏变化           | eventobjid, itemid, itemnum, itemix       | 玩家，道具类型，道具数量，道具所在格子索引 |
-| Player.EquipOff           | 脱下装备             | eventobjid, itemid, itemnum, itemix       | 同上                           |
-| Player.EquipOn            | 穿上装备             | eventobjid, itemid, itemnum, itemix       | 同上                           |
-| Player.InputContent       | 输入字符串           | eventobjid, content                        | 事件玩家，输入的字符串         |
-| Player.InputKeyDown       | 玩家按下按键         | eventobjid, vkey                           | 事件玩家，按下的键值           |
-| Player.InputKeyOnPress    | 玩家长按按键         | eventobjid, vkey                           | 同上                           |
-| Player.InputKeyUp         | 玩家松开按键         | eventobjid, vkey                           | 同上                           |
-| Player.InvateFriend       | 邀请好友             | eventobjid, toobjid                        | 事件玩家，目标玩家             |
-| Player.LevelModelUpgrade  | 玩家等级发生改变     | eventobjid                                 | 事件玩家                       |
-| Player.MotionStateChange  | 玩家行为状态变更     | eventobjid, playermotion                   | 事件玩家，行为状态枚举         |
-| Player.MountActor         | 玩家骑乘上           | eventobjid, targetactorid                  | 事件玩家，被攻击对象           |
-| Player.MoveOneBlockSize   | 玩家移动一格         | eventobjid, shortix, x, y, z              | 事件玩家                       |
-| Player.NewInputContent    | 聊天框输入           | eventobjid, content                        | 事件玩家，输入的字符串         |
-| Player.PickUpItem         | 玩家拾取道具         | eventobjid, toobjid, itemid, itemnum, x, y, z | 玩家，掉落物对象，道具类型，道具数量，坐标 |
-| Player.PlayAction         | 玩家使用表情动作     | eventobjid, act                            | 玩家，动作ID                   |
-| Player.RemoveBuff         | 玩家失去状态效果     | eventobjid, buffid, bufflvl                | 玩家，状态ID，状态等级         |
-| Player.Revive             | 玩家复活             | eventobjid, shortix, x, y, z              | 玩家，快捷栏索引，坐标位置     |
-| Player.SelectShortcut     | 快捷栏选择           | eventobjid, itemid, itemnum                | 玩家，道具类型，道具数量       |
-| Player.ShortcutChange     | 快捷栏变化           | eventobjid, itemid, itemnum, itemix       | 玩家，道具类型，道具数量，道具所在格子索引 |
-| Player.UseGiftPack        | 使用礼包道具         | eventobjid, itemid, itemnum                | 玩家，道具类型，道具数量       |
-| Player.UseItem            | 玩家使用道具         | eventobjid, itemid, itemnum, itemix       | 玩家，道具类型，道具数量，道具所在格子索引 |
-
----
-
-# 生物事件 (Actor)
-
-| 事件名称                 | 用法描述             | 接口参数                                  | 参数说明                           |
-| ------------------------ | -------------------- | ----------------------------------------- | -------------------------------- |
-| Actor.AddBuff            | 生物获得状态效果     | eventobjid, actorid, buffid, bufflvl      | 生物对象，生物类型，状态ID，状态等级 |
-| Actor.AreaIn             | 生物进入区域         | eventobjid, areaid                         | 生物对象，区域ID                 |
-| Actor.AreaOut            | 生物离开区域         | eventobjid, areaid                         | 同上                             |
-| Actor.AttackHit          | 攻击命中             | eventobjid, toobjid, actorid, targetactorid | 生物对象，被攻击对象，生物类型，被攻击生物类型 |
-| Actor.Attack             | 生物攻击             | eventobjid, toobjid, actorid, targetactorid | 同上                           |
-| Actor.BeHurt             | 生物受到伤害         | eventobjid, toobjid, hurtlv, actorid      | 生物对象，攻击对象，伤害值，生物类型 |
-| Actor.Beat               | 生物击败玩家/生物    | eventobjid, toobjid, actorid, targetactorid | 生物对象，攻击对象，生物类型，被攻击生物类型 |
-| Actor.ChangeAttr         | 生物属性变化         | eventobjid, actorid, actorattr, actorattrval | 生物对象，生物类型，属性枚举，改变值 |
-| Actor.ChangeMotion       | 生物行为状态变更     | eventobjid, actorid, actormotion           | 生物对象，生物类型，动作枚举值   |
-| Actor.Collide            | 生物碰撞玩家/生物    | eventobjid, toobjid, actorid, targetactorid | 生物对象，目标对象，生物类型，被碰撞生物类型 |
-| Actor.Create             | 生物被创建           | eventobjid, actorid                         | 生物对象，生物类型               |
-| Actor.Damage             | 生物造成伤害         | eventobjid, toobjid, hurtlv, actorid, targetactorid | 生物对象，目标对象，伤害值，生物类型，被攻击生物类型 |
-| Actor.Die                | 生物死亡             | eventobjid, toobjid, actorid               | 生物对象，攻击对象，生物类型     |
-| Actor.Projectile.Hit     | 投掷物击中           | eventobjid, toobjid, itemid, targetactorid, x, y, z, helperobjid | 投掷物对象，被击中对象，道具类型，被击中生物类型，坐标，投掷物所属对象 |
-| Actor.RemoveBuff         | 生物失去状态效果     | eventobjid, actorid, buffid, bufflvl       | 生物对象，生物类型，状态ID，状态等级 |
-
----
-
-# 方块事件 (Block)
-
-| 事件名称                 | 用法描述             | 接口参数                                  | 参数说明                           |
-| ------------------------ | -------------------- | ----------------------------------------- | -------------------------------- |
-| Block.Add                | 方块被创建           | blockid, x, y, z                          | 方块类型，坐标                   |
-| Block.DestroyBy          | 方块被破坏           | eventobjid, blockid, x, y, z              | 玩家对象，方块类型，坐标         |
-| Block.Dig.Begin          | 方块开始被挖掘       | eventobjid, blockid, x, y, z              | 玩家对象，方块类型，坐标         |
-| Block.Dig.Cancel         | 挖掘方块被取消       | eventobjid, blockid, x, y, z              | 同上                           |
-| Block.Dig.End            | 方块被挖掘完成       | eventobjid, blockid, x, y, z              | 同上                           |
-| Block.Remove             | 方块被移除           | blockid, x, y, z                          | 方块类型，坐标                   |
-| Block.Trigger            | 方块被激活/通电     | eventobjid, blockid, x, y, z              | 玩家对象，方块类型，坐标         |
-
----
-
-# 道具事件 (Item)
-
-| 事件名称                 | 用法描述             | 接口参数                                  | 参数说明                           |
-| ------------------------ | -------------------- | ----------------------------------------- | -------------------------------- |
-| DropItem.AreaIn          | 掉落物进入区域       | eventobjid, areaid, itemid                | 掉落物对象，区域ID，道具类型     |
-| DropItem.AreaOut         | 掉落物离开区域       | eventobjid, areaid, itemid                | 同上                           |
-| Item.Create             | 掉落物被创建         | eventobjid, itemid, defaultvalue, x, y, z | 掉落物对象，道具类型，掉落方式，坐标 |
-| Item.Destroy            | 装备被破坏           | eventobjid, itemid, itemnum                | 事件对象，道具类型，道具数量     |
-| Item.Disappear          | 掉落物消失           | eventobjid, itemid, itemnum, x, y, z      | 掉落物对象，道具类型，道具数量，坐标 |
-| Item.Pickup             | 掉落物被拾取         | eventobjid, toobjid, itemid, itemnum, x, y, z | 玩家对象，掉落物对象，道具类型，道具数量，坐标 |
-| Item.expend             | 食物道具被消耗       | eventobjid, itemid, itemnum                | 事件对象，道具类型，道具数量     |
-| Missile.AreaIn          | 投掷物进入区域       | eventobjid, areaid, itemid, helperobjid   | 投掷物对象，区域ID，道具类型，投掷物所属对象 |
-| Missile.AreaOut         | 投掷物离开区域       | eventobjid, areaid, itemid, helperobjid   | 同上                           |
-| Missile.Create          | 投掷物被创建         | eventobjid, itemid, toobjid, x, y, z      | 玩家对象，道具类型，投掷物对象，坐标 |
-| Particle.Item.OnCreate  | 特效在掉落物上创建   | eventobjid, effectid, x, y, z              | 掉落物对象，特效类型，坐标       |
-
----
-
-# 特效事件 (Particle)
-
-| 事件名称                 | 用法描述             | 接口参数                                  | 参数说明                           |
-| ------------------------ | -------------------- | ----------------------------------------- | -------------------------------- |
-| Particle.Mob.OnCreate    | 生物身上特效创建     | eventobjid, effectid, x, y, z             | 生物对象，特效类型，坐标         |
-| Particle.Player.OnCreate | 玩家身上特效创建     | eventobjid, effectid, x, y, z             | 玩家对象，特效类型，坐标         |
-| Particle.Pos.OnCreate    | 位置上特效创建       | effectid, x, y, z                         | 特效类型，坐标                   |
-| Particle.Projectile.OnCreate | 投掷物特效创建   | eventobjid, effectid, x, y, z             | 投掷物对象，特效类型，坐标       |
-
----
-
-# UI事件 (UI)
-
-| 事件名称                 | 用法描述             | 接口参数                                  | 参数说明                           |
-| ------------------------ | -------------------- | ----------------------------------------- | -------------------------------- |
-| UI.Button.Click          | 按钮松开             | eventobjid, CustomUI, uielement           | 玩家，UI对象，UI元件             |
-| UI.Button.TouchBegin     | 按钮按下             | eventobjid, CustomUI, uielement           | 同上                           |
-| UI.GLoader3D.Click       | 3D模型被松开         | eventobjid, CustomUI, uielement           | 同上                           |
-| UI.GLoader3D.TouchBegin  | 3D模型被按下         | eventobjid, CustomUI, uielement           | 同上                           |
-| UI.Hide                  | 界面被关闭           | eventobjid, CustomUI                       | 玩家，UI对象                   |
-| UI.LostFocus             | 输入框失去焦点       | eventobjid, CustomUI, uielement, content  | 玩家，UI对象，UI元件，输入内容 |
-| UI.Show                  | 界面被打开           | eventobjid, CustomUI                       | 玩家，UI对象                   |
-
----
-
-# 其他事件 (*)
-
-| 事件名称                 | 用法描述             | 接口参数                                  | 参数说明                           |
-| ------------------------ | -------------------- | ----------------------------------------- | -------------------------------- |
-| BluePrint.BuildBegin     | 蓝图开始创建         | areaid                                    | 区域ID                         |
-| Craft.end                | 配方合成完成         | eventobjid, craftid, itemid, itemnum     | 事件对象，配方ID，道具类型，道具数量 |
-| Developer.BuyItem        | 玩家购买或提取商品   | eventobjid, itemid                        | 事件对象，道具类型             |
-| Furnace.begin            | 熔炼开始             | furnaceid, x, y, z                        | 熔炼ID，坐标                   |
-
----
-
-# 示例代码
-
-### 监听玩家击杀生物事件，计数并结束游戏示例
+### 注册事件示例
 
 ```lua
-local killCount = 0
-local targetActorId = 3102 -- 目标生物ID
+-- 注册游戏开始事件
+ScriptSupportEvent:registerEvent("Game.Start", function(event)
+    print("游戏开始")
+end)
 
-local function OnDefeatActor(event)
-    local actorId = event.targetactorid
-    if actorId == targetActorId then
-        killCount = killCount + 1
-        Chat:sendSystemMsg("击杀数量："..killCount)
-        if killCount >= 10 then
-            Game:doGameEnd()
-        end
-    end
-end
-
-ScriptSupportEvent:registerEvent("Player.DefeatActor", OnDefeatActor)
-```
-
-### 监听玩家进入区域事件
-
-```lua
-local function OnPlayerAreaIn(event)
+-- 注册玩家死亡事件
+ScriptSupportEvent:registerEvent("Player.Die", function(event)
     local playerId = event.eventobjid
-    local areaId = event.areaid
-    Chat:sendSystemMsg("玩家 "..playerId.." 进入区域 "..areaId)
+    print("玩家死亡，ID:", playerId)
+end)
+```
+
+### 事件参数说明示例
+
+| 事件名           | 参数名       | 类型    | 说明                 |
+| ---------------- | ------------ | ------- | -------------------- |
+| Player.Die       | eventobjid   | number  | 事件玩家对象ID       |
+|                  | shortix      | number  | 快捷栏索引           |
+|                  | x, y, z      | number  | 玩家坐标             |
+
+---
+
+## 世界接口 World
+
+### 函数列表
+
+| 函数名                          | 参数说明                         | 返回值            | 说明                       |
+| -------------------------------| --------------------------------| ----------------- | -------------------------- |
+| spawnCreature(x,y,z, actorId)  | 坐标x,y,z，生物ID               | code, objids      | 生成生物                   |
+| despawnCreature(objid)          | 生物对象ID                      | code              | 删除生物                   |
+| getBlockID(x,y,z)               | 坐标x,y,z                      | code, blockid     | 获取方块ID                 |
+| setBlockAll(x,y,z, id, data)    | 坐标x,y,z，方块ID，方块数据     | code              | 设置方块                   |
+| getAllPlayer()                  | 无                             | code, playerids   | 获取所有玩家ID             |
+| getAllCreature()                | 无                             | code, objids      | 获取所有生物对象ID         |
+
+### 示例
+
+```lua
+local ret, objids = World:spawnCreature(0,10,0, 3102)
+if ret == ErrorCode.OK then
+    Chat:sendSystemMsg("生物生成成功")
 end
 
-ScriptSupportEvent:registerEvent("Player.AreaIn", OnPlayerAreaIn)
+World:despawnCreature(objids[1])
 ```
 
 ---
 
-# 错误码 (ErrorCode)
+## 游戏逻辑接口 Game
+
+### 主要函数
+
+| 函数名                     | 参数                         | 返回值          | 说明                       |
+| -------------------------- | ---------------------------- | --------------- | -------------------------- |
+| doGameEnd()                | 无                           | code            | 结束游戏                   |
+| dispatchEvent(msgid, params) | 事件ID(string), 参数(table) | code            | 派发自定义事件             |
+| getDefString(id)           | 字符串ID(number)             | code, string    | 获取默认字符串             |
+| setScriptVar(index, val)   | 参数索引(number), 值(number) | code            | 设置脚本变量               |
+| getScriptVar(index)        | 参数索引(number)             | code, val       | 获取脚本变量               |
+
+### 示例
+
+```lua
+-- 结束游戏
+Game:doGameEnd()
+
+-- 派发自定义事件
+local ok, jsonStr = pcall(JSON.encode, JSON, {id=123, ops="aaa"})
+Game:dispatchEvent("customevent", {customdata = jsonStr})
+
+-- 获取默认字符串
+local code, str = Game:getDefString(1)
+if code == ErrorCode.OK then
+    print("默认字符串:", str)
+end
+```
+
+---
+
+## 玩家接口 Player
+
+### 主要函数
+
+| 函数名                     | 参数                         | 返回值          | 说明                       |
+| -------------------------- | ---------------------------- | --------------- | -------------------------- |
+| getPosition()              | 无                           | code, x, y, z   | 获取玩家位置               |
+| setPosition(x,y,z)         | 坐标                         | code            | 设置玩家位置               |
+| getHealth()                | 无                           | code, hp        | 获取玩家生命值             |
+| setHealth(hp)              | 生命值                       | code            | 设置玩家生命值             |
+| getName()                  | 无                           | code, string    | 获取玩家名称               |
+| sendMessage(msg)           | 消息字符串                   | code            | 发送聊天信息               |
+| addItemToBackpack(itemid, count) | 道具ID，数量             | code            | 添加道具到背包             |
+
+### 示例
+
+```lua
+local ret, x, y, z = Player:getPosition()
+if ret == ErrorCode.OK then
+    print("玩家位置:", x, y, z)
+end
+
+Player:setHealth(100)
+Player:sendMessage("欢迎来到游戏！")
+```
+
+---
+
+## 生物接口 Actor
+
+### 主要函数
+
+| 函数名                     | 参数                         | 返回值          | 说明                       |
+| -------------------------- | ---------------------------- | --------------- | -------------------------- |
+| getActorID(objid)          | 生物对象ID                   | code, actorId   | 获取生物类型ID             |
+| getHealth(objid)           | 生物对象ID                   | code, hp        | 获取生命值                 |
+| setHealth(objid, hp)       | 生物对象ID，生命值           | code            | 设置生命值                 |
+| isAlive(objid)             | 生物对象ID                   | code, bool      | 判断是否存活               |
+| addBuff(objid, buffid, level, duration) | 生物ID，buffID，等级，持续时间 | code | 添加状态效果         |
+
+### 示例
+
+```lua
+local ret, actorId = Actor:getActorID(objid)
+if ret == ErrorCode.OK then
+    print("生物类型ID:", actorId)
+end
+
+Actor:addBuff(objid, 101, 1, 60)
+```
+
+---
+
+## 方块接口 Block
+
+### 主要函数
+
+| 函数名                     | 参数                         | 返回值          | 说明                       |
+| -------------------------- | ---------------------------- | --------------- | -------------------------- |
+| isSolidBlock(x,y,z)        | 坐标                         | code            | 是否固体方块               |
+| isLiquidBlock(x,y,z)       | 坐标                         | code            | 是否液体方块               |
+| getBlockID(x,y,z)          | 坐标                         | code, blockid   | 获取方块ID                 |
+| setBlockAll(x,y,z, id, data) | 坐标，方块ID，数据          | code            | 设置方块及数据             |
+| destroyBlock(x,y,z, drop)  | 坐标，是否掉落(0/1)          | code            | 摧毁方块                   |
+
+### 示例
+
+```lua
+local code = Block:isSolidBlock(0, 6, 0)
+if code == ErrorCode.OK then
+    print("该位置是固体方块")
+end
+
+Block:setBlockAll(0, 6, 0, 1, 0) -- 设置方块ID为1，数据为0
+```
+
+---
+
+## 道具接口 Item
+
+### 主要函数
+
+| 函数名                     | 参数                         | 返回值          | 说明                       |
+| -------------------------- | ---------------------------- | --------------- | -------------------------- |
+| createItem(itemid, count)  | 道具ID，数量                 | code, objid     | 创建掉落物                 |
+| destroyItem(objid)         | 掉落物对象ID                 | code            | 删除掉落物                 |
+| getItemCount(objid)        | 掉落物对象ID                 | code, count     | 获取掉落物数量             |
+
+---
+
+## 错误码 ErrorCode
 
 | 错误码         | 含义               |
 | -------------- | ------------------ |
@@ -268,13 +206,66 @@ ScriptSupportEvent:registerEvent("Player.AreaIn", OnPlayerAreaIn)
 
 ---
 
-> **注意**  
-> - 所有事件回调函数参数均为一个table，字段名对应接口参数。  
-> - 返回值一般为ErrorCode，具体请参考API各函数说明。  
-> - 以上为官方公开的主流事件和接口，更多详细接口请参考官方Wiki或SDK文档。
+## 事件详细说明（示例部分）
+
+### 玩家事件 Player.Die
+
+- **事件名称**：Player.Die  
+- **描述**：玩家死亡时触发  
+- **回调参数**：
+
+| 参数名    | 类型   | 说明             |
+| --------- | ------ | ---------------- |
+| eventobjid | number | 事件玩家对象ID   |
+| shortix   | number | 快捷栏索引       |
+| x, y, z   | number | 玩家当前位置坐标 |
+
+### 示例代码
+
+```lua
+local function OnPlayerDie(event)
+    local playerId = event.eventobjid
+    local x, y, z = event.x, event.y, event.z
+    print(string.format("玩家 %d 死亡，位置：(%d,%d,%d)", playerId, x, y, z))
+end
+
+ScriptSupportEvent:registerEvent("Player.Die", OnPlayerDie)
+```
 
 ---
 
-如果需要，我可以帮你进一步拆分模块，添加函数详细参数说明和更多示例。  
-欢迎继续提问！
+### 生物事件 Actor.AddBuff
 
+- **事件名称**：Actor.AddBuff  
+- **描述**：生物获得状态效果时触发  
+- **回调参数**：
+
+| 参数名    | 类型   | 说明               |
+| --------- | ------ | ------------------ |
+| eventobjid | number | 事件生物对象ID     |
+| actorid   | number | 生物类型ID         |
+| buffid    | number | 状态效果ID         |
+| bufflvl   | number | 状态效果等级       |
+
+### 示例代码
+
+```lua
+local function OnActorAddBuff(event)
+    print(string.format("生物 %d 获得状态 %d，等级 %d", event.eventobjid, event.buffid, event.bufflvl))
+end
+
+ScriptSupportEvent:registerEvent("Actor.AddBuff", OnActorAddBuff)
+```
+
+---
+
+## 说明
+
+- 所有事件回调函数均接收一个table参数，字段名对应事件参数名  
+- 返回值一般为ErrorCode，具体请参考各接口说明  
+- 以上为主要接口示范，完整API请根据需求补充扩展  
+
+---
+
+如果需要，我可以帮你继续整理剩余接口和事件，形成完整标准的README.md。  
+请告诉我是否继续？
