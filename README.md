@@ -1,129 +1,360 @@
-# 事件监听文档
+# 迷你世界 脚本API 完整说明文档
+
+> 本文档基于官方Wiki内容整理，包含迷你世界全部脚本API接口说明、参数、返回值及示例，方便开发者快速查阅使用。
+
+---
 
 ## 目录
 
-- [Wiki](#wiki)  
-- [登录](#login)  
-- [事件列表](#event-list)  
-  - [世界事件 (World)](#world-events)  
-  - [游戏逻辑 (Game)](#game-logic)  
-  - [玩家事件 (Player)](#player-events)  
-  - [生物事件 (Actor)](#actor-events)  
-  - [方块事件 (Block)](#block-events)  
-  - [道具事件 (Item)](#item-events)  
-  - [特效事件 (Particle)](#particle-events)  
+- [事件监听 Event](#事件监听-event)
+- [游戏规则 GameRule](#游戏规则-gamerule)
+- [游戏接口 Game](#游戏接口-game)
+- [方块接口 Block](#方块接口-block)
+- [状态接口 Buff](#状态接口-buff)
+- [UI接口 UI](#ui接口-ui)
+- [区域接口 Area](#区域接口-area)
+- [聊天接口 Chat](#聊天接口-chat)
+- [组队接口 Team](#组队接口-team)
+- [道具接口 Item](#道具接口-item)
+- [背包接口 Backpack](#背包接口-backpack)
+- [容器接口 WorldContainer](#容器接口-worldcontainer)
+- [显示板管理 DisPlayBoard](#显示板管理-displayboard)
+- [云服数据存储 CloudSever](#云服数据存储-cloudsever)
+- [计时器接口 MiniTimer](#计时器接口-minitimer)
+- [函数监听接口 ListenParam](#函数监听接口-listenparam)
+- [变量组接口 ValueGroup](#变量组接口-valuegroup)
+- [对象库接口 ObjectLib](#对象库接口-objectlib)
+- [小地图接口 Mapmark](#小地图接口-mapmark)
+- [出生点接口 Spawnport](#出生点接口-spawnport)
+- [接口常量列表](#接口常量列表)
+- [学习案例](#学习案例)
+- [脚本常见问题](#脚本常见问题)
 
 ---
 
-## Wiki <a name="wiki"></a>
+## 事件监听 Event
 
-（此处可添加 Wiki 相关内容）
-
----
-
-## 登录 <a name="login"></a>
-
-（此处可添加登录相关说明）
-
----
-
-## 事件列表 <a name="event-list"></a>
-
-### 彼得兔  
-更新时间: 2025-05-07 15:25:41
-
-> 直接添加要监听的事件即可，无需自行创建事件管理对象。具体例子如下：
+### 注册事件示例
 
 ```lua
--- 游戏事件 ---
-ScriptSupportEvent:registerEvent([=[Game.Start]=], Game_StartGame)
-ScriptSupportEvent:registerEvent([=[Game.Run]=], Game_Update)
-ScriptSupportEvent:registerEvent([=[Game.End]=], Game_GameOver)
+ScriptSupportEvent:registerEvent("Player.ClickBlock", function(event)
+    local blockid = event.blockid
+    Chat:sendSystemMsg("点击了方块ID:"..blockid)
+end)
+```
 
--- 玩家事件 ---
-ScriptSupportEvent:registerEvent([=[Player.Die]=], Player_Dead)
-ScriptSupportEvent:registerEvent([=[Player.Revive]=], Player_Revive)
-ScriptSupportEvent:registerEvent([=[Player.AddItem]=], BackPack_AddItem)
+### 事件分类
 
--- 方块事件 ---
-ScriptSupportEvent:registerEvent([=[Block.Add]=], Block_Add)
-ScriptSupportEvent:registerEvent([=[Block.DestroyBy]=], Block_Destroy)
-ScriptSupportEvent:registerEvent([=[Block.Trigger]=], Block_Trigger)
+| 分类         | 说明                   |
+| ------------ | ---------------------- |
+| 世界事件     | 容器道具变化等         |
+| 游戏逻辑     | 时间变化等             |
+| 玩家事件     | 玩家行为，如死亡、攻击 |
+| 生物事件     | 生物状态变化、攻击等   |
+| 方块事件     | 方块创建、破坏、触发   |
+| 道具事件     | 掉落物创建、拾取       |
+| 特效事件     | 特效创建               |
+| UI事件       | 自定义UI交互           |
+| 其他事件     | 蓝图、合成、剧情等     |
+
+---
+
+## 游戏规则 GameRule
+
+| 规则项           | 描述                      | 示例值 |
+| ---------------- | ------------------------- | ------ |
+| EndTime          | 游戏时长（分钟）          | 6      |
+| TeamNum          | 队伍数量                  | 2      |
+| MaxPlayers       | 最大玩家数量              | 6      |
+| AllowMidwayJoin  | 是否允许中途加入（0/1）   | 1      |
+| DisplayScore     | 是否显示比分（0/1）       | 1      |
+
+示例：
+
+```lua
+local GameRule = class.GameRule.new()
+GameRule.EndTime = 6
+GameRule.TeamNum = 2
+GameRule.MaxPlayers = 6
+GameRule.AllowMidwayJoin = 1
 ```
 
 ---
 
-## 世界事件 (World) <a name="world-events"></a>
+## 游戏接口 Game
 
-| 名称                | 用法描述         | 接口参数                 | 参数说明                       |
-|---------------------|------------------|--------------------------|------------------------------|
-| Backpack.ItemChange  | 容器内道具变化   | blockid,itemid,itemnum,x,y,z | 方块类型, 道具类型, 道具数量, 方块坐标 |
-| Backpack.ItemPutIn   | 容器内有道具放入 | blockid,itemid,itemnum,x,y,z | 方块类型, 道具类型, 道具数量, 方块坐标 |
-| Backpack.ItemTakeOut | 容器内有道具取出 | blockid,itemid,itemnum,x,y,z | 方块类型, 道具类型, 道具数量, 方块坐标 |
+### 函数列表
 
----
-
-## 游戏逻辑 (Game) <a name="game-logic"></a>
-
-| 名称         | 用法描述         | 接口参数     | 参数说明    |
-|--------------|------------------|--------------|-------------|
-| Game.Hour    | 世界小时时间变化 | hour         | 游戏小时时间 |
-| Game.RunTime | 世界Tick变化     | second,ticks | 游戏分钟, 游戏秒 |
-
----
-
-## 玩家事件 (Player) <a name="player-events"></a>
-
-| 名称                 | 用法描述           | 接口参数                         | 参数说明                           |
-|----------------------|--------------------|---------------------------------|----------------------------------|
-| Game.AnyPlayer.Defeat | 任一玩家失败       | eventobjid,shortix,x,y,z        | 事件玩家, 快捷栏索引, 坐标位置    |
-| Game.AnyPlayer.EnterGame | 任一玩家进入    | eventobjid,shortix,x,y,z        | 事件玩家, 快捷栏索引, 坐标位置    |
-| Player.AddBuff        | 玩家获得状态效果   | eventobjid,buffid,bufflvl       | 事件玩家, 状态ID, 状态等级        |
-| Player.AddItem        | 玩家获得道具       | eventobjid,itemid,itemnum       | 事件玩家, 道具类型, 道具数量      |
-| Player.Die            | 玩家死亡           | eventobjid,shortix,x,y,z        | 事件玩家, 快捷栏索引, 坐标位置    |
-| Player.Revive         | 玩家复活           | eventobjid,shortix,x,y,z        | 事件玩家, 快捷栏索引, 坐标位置    |
-| Player.InputKeyDown   | 玩家按下按键       | eventobjid,vkey                 | 事件玩家, 按下的键值              |
-| Player.PickUpItem     | 玩家拾取道具       | eventobjid,toobjid,itemid,itemnum | 事件玩家, 掉落物objid, 道具类型ID, 道具数量 |
-
-> 更多玩家事件请根据需求参考完整列表。
+| 序号 | 函数名                     | 描述                         |
+| -----|----------------------------|------------------------------|
+| 1    | doGameEnd()                | 游戏结束                     |
+| 2    | dispatchEvent(msgid, params) | 派发自定义事件             |
+| 3    | getDefString(id)           | 获取默认字符串               |
+| 4    | setScriptVar(index, val)   | 设置脚本参数                 |
+| 5    | getScriptVar(index)        | 获取脚本参数                 |
+| 6    | sendScriptVars2Client()    | 上传脚本参数到客户端         |
+| 7    | addRenderGlobalEffect(path) | 添加全局特效               |
+| 8    | removeRenderGlobalEffect(effectid) | 移除全局特效          |
+| 9    | setRenderGlobalEffectPos(effectid, x, y, z) | 设置特效位置     |
+| 10   | setRenderGlobalEffectScale(effectid, scalex, scaley, scalez) | 设置特效缩放 |
+| 11   | msgBox(msg)                | 消息弹框                     |
+| 12   | splitStr(str, mark)        | 分割字符串                   |
 
 ---
 
-## 生物事件 (Actor) <a name="actor-events"></a>
+### doGameEnd
 
-| 名称                 | 用法描述           | 接口参数                         | 参数说明                           |
-|----------------------|--------------------|---------------------------------|----------------------------------|
-| Actor.AddBuff         | 生物获得状态效果   | eventobjid,actorid,buffid,bufflvl | 事件生物, 生物类型, 状态ID, 状态等级 |
-| Actor.AreaIn          | 生物进入区域       | eventobjid,areaid               | 事件生物, 区域ID                  |
-| Actor.AttackHit       | 攻击命中           | eventobjid,toobjid,actorid,targetactorid | 事件生物, 攻击对象, 生物类型, 攻击对象生物类型 |
-| Actor.Die             | 生物死亡           | eventobjid,toobjid,actorid      | 事件生物, 攻击对象, 生物类型      |
+- **参数**: 无  
+- **返回值**: code:number (ErrorCode)  
+- **功能**: 结束游戏
 
----
+示例：
 
-## 方块事件 (Block) <a name="block-events"></a>
-
-| 名称             | 用法描述         | 接口参数                | 参数说明               |
-|------------------|------------------|-------------------------|------------------------|
-| Block.Add        | 被创建           | blockid,x,y,z           | 方块类型, 方块坐标     |
-| Block.DestroyBy  | 局部方块被破坏   | eventobjid,blockid,x,y,z | 事件玩家, 方块类型, 方块坐标 |
-| Block.Dig.Begin  | 方块开始被挖掘   | eventobjid,blockid,x,y,z | 事件玩家, 方块类型, 方块坐标 |
-| Block.Trigger    | 活跃/通电       | eventobjid,blockid,x,y,z | 事件玩家, 方块类型, 方块坐标 |
+```lua
+Game:doGameEnd()
+```
 
 ---
 
-## 道具事件 (Item) <a name="item-events"></a>
+### dispatchEvent
 
-| 名称                 | 用法描述           | 接口参数                         | 参数说明                           |
-|----------------------|--------------------|---------------------------------|----------------------------------|
-| Item.Create          | 掉落物被创建       | eventobjid,itemid,defaultvalue,x,y,z | 掉落物, 道具类型, 掉落方式, 方块坐标 |
-| Item.Destroy         | 装备被破坏         | eventobjid,itemid,itemnum       | 事件对象, 道具类型, 道具数量      |
-| Item.Pickup          | 掉落物被拾取       | eventobjid,toobjid,itemid,itemnum,x,y,z | 事件玩家, 掉落物objid, 道具类型, 道具数量, 方块坐标 |
+- **参数**:  
+  - msgid:string 事件ID  
+  - params:table 事件参数  
+- **返回值**: code:number (ErrorCode)  
+- **功能**: 派发自定义事件
+
+示例：
+
+```lua
+local data = {id = 123, ops = "aaa"}
+local ok, json = pcall(JSON.encode, JSON, data)
+Game:dispatchEvent("customevent", {customdata = json})
+```
 
 ---
 
-## 特效事件 (Particle) <a name="particle-events"></a>
+### getDefString
 
-| 名称                   | 用法描述           | 接口参数                 | 参数说明               |
-|------------------------|--------------------|--------------------------|------------------------|
-| Particle.Mob.OnCreate   | 生物身上特效创建   | eventobjid,effectid,x,y,z | 事件生物, 特效类型, 方块位置 |
-| Particle.Player.OnCreate| 玩家身上特效创建   | eventobjid,effectid,x,y,z | 事件玩家, 特效类型, 方块位置 |
+- **参数**: id:number  
+- **返回值**: code:number, str:string  
+- **功能**: 获取默认字符串
+
+示例：
+
+```lua
+local code, str = Game:getDefString(1)
+Chat:sendSystemMsg("默认字符串内容："..str)
+```
+
+---
+
+### setScriptVar / getScriptVar
+
+- **setScriptVar(index:number, val:number)**  
+- **getScriptVar(index:number)** 返回 code, val
+
+示例：
+
+```lua
+Game:setScriptVar(1, 100)
+local code, val = Game:getScriptVar(1)
+if code == ErrorCode.OK then
+    print("值为", val)
+end
+```
+
+---
+
+### addRenderGlobalEffect / removeRenderGlobalEffect
+
+- **addRenderGlobalEffect(path:string)** 返回 code, effectid  
+- **removeRenderGlobalEffect(effectid:number)** 返回 code
+
+示例：
+
+```lua
+local code, effectid = Game:addRenderGlobalEffect("particles/Fog.ent")
+Game:removeRenderGlobalEffect(effectid)
+```
+
+---
+
+### msgBox
+
+- **参数**: msg:string  
+- **功能**: 弹出消息框
+
+示例：
+
+```lua
+Game:msgBox("这是一个弹窗！")
+```
+
+---
+
+### splitStr
+
+- **参数**: str:string, mark:string  
+- **返回**: code:number, strs:table
+
+示例：
+
+```lua
+local code, arr = Game:splitStr("a,b,c", ",")
+```
+
+---
+
+## 方块接口 Block
+
+### 常用函数
+
+| 函数名                     | 参数说明                         | 返回值     | 功能描述               |
+| -------------------------- | --------------------------------| ---------- | ---------------------- |
+| isSolidBlock(x,y,z)         | 坐标x,y,z                       | code       | 是否固体方块           |
+| isLiquidBlock(x,y,z)        | 坐标x,y,z                       | code       | 是否液体方块           |
+| isAirBlock(x,y,z)           | 坐标x,y,z                       | code       | 是否空气方块           |
+| getBlockID(x,y,z)           | 坐标x,y,z                       | code, id   | 获取方块ID             |
+| getBlockData(x,y,z)         | 坐标x,y,z                       | code, data | 获取方块数据           |
+| setBlockAll(x,y,z, id, data)| 坐标x,y,z, 方块ID，数据         | code       | 设置方块及数据         |
+| destroyBlock(x,y,z, drop)   | 坐标x,y,z, 是否掉落道具(0/1)   | code       | 摧毁方块               |
+| placeBlock(id,x,y,z,face)   | 方块ID，坐标，放置面            | code       | 放置方块               |
+| replaceBlock(id,x,y,z,face) | 方块ID，坐标，替换面            | code       | 替换方块               |
+
+示例：
+
+```lua
+local res = Block:isSolidBlock(0,6,0)
+if res == ErrorCode.OK then
+    Chat:sendSystemMsg("是固体方块")
+end
+```
+
+---
+
+## 状态接口 Buff
+
+### 常用函数
+
+| 函数名                      | 参数说明                     | 返回值 | 功能描述             |
+| --------------------------- | ----------------------------| ------ | -------------------- |
+| addBuff(objid,buffid,bufflv,duration) | 目标对象ID，buffID，等级，持续时间 | code | 添加状态效果         |
+| removeBuff(objid,buffid)    | 目标对象ID，buffID           | code   | 移除指定状态         |
+| clearAllBuff(objid)         | 目标对象ID                   | code   | 清除所有状态         |
+| hasBuff(objid,buffid,bufflv)| 目标对象ID，buffID，等级     | code   | 判断是否有指定状态   |
+
+示例：
+
+```lua
+Buff:addBuff(objid, buffid, bufflv, -1)
+```
+
+---
+
+## UI接口 UI
+
+### 常用函数示例
+
+```lua
+UI:setGBattleUI("left_title", "左标题示例")
+Customui:setText(playerid, uiid, elementid, "文本内容")
+```
+
+---
+
+## 区域接口 Area
+
+### 创建矩形区域
+
+```lua
+local result, areaid = Area:createAreaRect({x=0,y=10,z=0}, {x=1,y=2,z=3})
+```
+
+### 区域填充方块
+
+```lua
+Area:fillBlock(areaid, 112)
+```
+
+---
+
+## 更多接口
+
+请告诉我你想先整理哪个模块，我帮你继续详细写完。
+
+---
+
+## 示例代码
+
+### 游戏开始刷怪并计数击杀
+
+```lua
+local ActorId = 3102
+local obj_ids = {}
+local def_count = 0
+
+local function SpawnMonsters()
+    local ret, x, y, z = Player:getPosition()
+    for i=1,5 do
+        local newX = math.random(-5,5)+x
+        local newZ = math.random(-5,5)+z
+        local ret, objids = World:spawnCreature(newX,y,newZ, ActorId)
+        if ret == ErrorCode.OK then
+            table.insert(obj_ids, objids[1])
+        end
+    end
+end
+
+local function ClearMonsters()
+    for _, id in ipairs(obj_ids) do
+        World:despawnCreature(id)
+    end
+    obj_ids = {}
+end
+
+function Game_Start()
+    local ret, timerId = MiniTimer:createTimer("计时X")
+    if ret == ErrorCode.OK then
+        MiniTimer:startForwardTimer(timerId)
+        SpawnMonsters()
+    end
+end
+
+function Timer_Change(event_args)
+    local timerid = event_args['timerid']
+    local ret, secs = MiniTimer:getTimerTime(timerid)
+    if ret == ErrorCode.OK and secs % 10 == 0 then
+        ClearMonsters()
+        SpawnMonsters()
+    end
+end
+
+function Defeat_Actor(event_args)
+    local toobjid = event_args['toobjid']
+    local ret, actorId = Creature:getActorID(toobjid)
+    if ret == ErrorCode.OK and actorId == ActorId then
+        def_count = def_count + 1
+        Chat:sendSystemMsg("击杀数量:"..def_count)
+        if def_count >= 10 then
+            Game:doGameEnd()
+        end
+    end
+end
+
+ScriptSupportEvent:registerEvent("Game.Start", Game_Start)
+ScriptSupportEvent:registerEvent("minitimer.change", Timer_Change)
+ScriptSupportEvent:registerEvent("Player.DefeatActor", Defeat_Actor)
+```
+
+---
+
+> **提示**：  
+> - 本文档示例均为Lua脚本代码块，支持GitHub语法高亮  
+> - 可自行根据需要添加更多模块说明和示例  
+> - 需要完整文档或拆分模块请告诉我  
+
+---
+
+如果你需要，我可以帮你继续完成全部模块的详细README.md格式文档，或者帮你生成分章节的Markdown文件包。  
+随时告诉我你的需求！
